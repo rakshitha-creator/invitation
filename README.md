@@ -21,16 +21,24 @@ Nothing is redrawn or generated.
 2. **Hero** (`HeroScene.tsx`, ref 2): the reference split into 9 depth planes (wash, bells, pillar,
    leaves, names, lotus pond, couple, lamp, kalash). Pointer (or gentle drift on phones) moves the
    camera; scrolling dollies *into* the scene.
-3. **Gateway** (`Gateway.tsx`, ref 3): you walk up to the gopuram and through its open, lit doorway.
+3. **Gateway** (`Gateway.tsx`, ref 3): you walk up to the gopuram and through its open, lit doorway,
+   past the ref 5 banana trees and ref 4 pillars that part to the sides; the welcome words stay on
+   screen until you cross the door.
 4. **Invitation** (`InviteCard.tsx`, ref 4 pillars): tap the silk cover and it swings open in 3D.
+   **The rest of the site stays closed until the card is opened** (`<html data-gate>`; links with a
+   `#section` skip this).
 5. **The Bride & Groom** (ref 7): portraits inside the watercolour courtyard.
-6. **Our Story** (ref 8): opens on the saptapadi feet; the path draws as you scroll.
-7. **Celebrations** (refs 6 + 10): the maroon hall with swinging bells, a kolam that opens as it
-   scrolls in and the garlanded pillar; each event card opens on its ref 10 scene.
+6. **Our Story** (ref 8): opens on the saptapadi feet; seven footsteps (his foot and hers, cut from
+   ref 8) land on the path as you scroll.
+7. **Celebrations** (refs 6 + 10): the section pins and scrolling moves the five cards **sideways**,
+   each turning in 3D as it passes the centre, through the maroon hall (bells, kolam, garlanded
+   pillar, urli drifting at their own depths); each card opens on its ref 10 scene.
 8. **Venue** (ref 5): banana trees in gold pots at the entrance, Directions + Add to calendar.
 9. **Gallery**, **Countdown** (ref 10's reaching hands), **RSVP + Instagram**.
 10. **Closing** (ref 9): Ram's blue hand and Sita's hennaed hand meet under the marigold arch.
 
+Depth: every image layer marked `data-depth` drifts with the pointer (or the phone's tilt) by its
+depth — see `Motion.tsx` and `globals.css`.
 Motion: `Cinema.tsx` (GSAP ScrollTrigger: hero dolly, gateway walk, story path, hands), `Motion.tsx`
 (reveals, parallax, tilt), `Petals.tsx` (light petals). With *reduced motion* everything is shown
 at rest, with no tall scroll stages. Without JavaScript the opening is hidden and every section shows.

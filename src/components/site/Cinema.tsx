@@ -61,6 +61,8 @@ export default function Cinema() {
     /* the opening overlay locks scrolling; re-measure once it is gone */
     const refresh = () => ScrollTrigger.refresh();
     addEventListener("opening:done", refresh);
+    // the story, celebrations and closing only exist on the page once the card is opened
+    addEventListener("card:open", refresh);
     document.fonts?.ready.then(refresh);
 
     return () => {
@@ -68,6 +70,7 @@ export default function Cinema() {
       cancelAnimationFrame(raf);
       removeEventListener("pointermove", onMove);
       removeEventListener("opening:done", refresh);
+      removeEventListener("card:open", refresh);
     };
   }, []);
 

@@ -96,7 +96,7 @@ export default function Invitation() {
       {/* ── 3 · The invitation card ──────────────────────────── */}
       <section className={`${sc.invite} ${r.invite}`} id="invite" aria-labelledby="invite-title">
         {(["L", "R"] as const).map((side) => (
-          <div key={side} className={`${r.invitePillar} ${r[`invitePillar${side}`]}`} data-parallax="0.08" aria-hidden="true">
+          <div key={side} className={`${r.invitePillar} ${r[`invitePillar${side}`]}`} data-parallax="0.08" data-depth="22" aria-hidden="true">
             <img src={pillar.src} alt="" width={pillar.w} height={pillar.h} loading="lazy" decoding="async" />
           </div>
         ))}
@@ -111,6 +111,8 @@ export default function Invitation() {
         </div>
       </section>
 
+      {/* everything below opens once the guest opens the card (InviteCard lifts <html data-gate>) */}
+      <div className={r.afterInvite}>
       {/* ── 4 · Bride & Groom, in the courtyard ──────────────── */}
       <section className={`${styles.section} ${sc.courtyard} ${r.courtyard}`} id="couple">
         <div className={sc.courtyardBack} aria-hidden="true">
@@ -125,6 +127,7 @@ export default function Invitation() {
               loading="lazy"
               decoding="async"
               data-parallax="0.05"
+              data-depth="14"
             />
           ))}
         </div>
@@ -147,10 +150,11 @@ export default function Invitation() {
 
       {/* ── 5 · Our story: the seven steps ───────────────────── */}
       <section className={`${styles.section} ${sc.story} ${r.story}`} id="story" data-scene="story">
-        <img className={`${r.storyLeaf} ${r.storyLeafL}`} src={saptapadi.leafL.src} alt="" width={saptapadi.leafL.w} height={saptapadi.leafL.h} loading="lazy" decoding="async" />
-        <img className={`${r.storyLeaf} ${r.storyLeafR}`} src={saptapadi.leafR.src} alt="" width={saptapadi.leafR.w} height={saptapadi.leafR.h} loading="lazy" decoding="async" />
+        <img data-depth="16" className={`${r.storyLeaf} ${r.storyLeafL}`} src={saptapadi.leafL.src} alt="" width={saptapadi.leafL.w} height={saptapadi.leafL.h} loading="lazy" decoding="async" />
+        <img data-depth="16" className={`${r.storyLeaf} ${r.storyLeafR}`} src={saptapadi.leafR.src} alt="" width={saptapadi.leafR.w} height={saptapadi.leafR.h} loading="lazy" decoding="async" />
         <div className={r.feet} data-reveal="zoom">
           <img
+            data-depth="10"
             src={saptapadi.feet.src}
             alt="The bride and groom walking the seven steps, their cloths tied together"
             width={saptapadi.feet.w}
@@ -162,9 +166,19 @@ export default function Invitation() {
         <Heading kicker="Saptapadi · how it began" title="Our Story" />
         <ol className={sc.path}>
           <span className={sc.pathLine} aria-hidden="true" />
+          {/* the seven steps of the saptapadi: his foot and hers (cut from ref 8) walk down the
+              path as you scroll */}
+          <span className={r.walk} aria-hidden="true">
+            {Array.from({ length: 7 }, (_, i) => (
+              <span key={i} className={r.footstep} style={{ "--i": i } as CSSProperties}>
+                <img className={r.footHis} src={saptapadi.footHis.src} alt="" width={saptapadi.footHis.w} height={saptapadi.footHis.h} loading="lazy" decoding="async" />
+                <img className={r.footHers} src={saptapadi.footHers.src} alt="" width={saptapadi.footHers.w} height={saptapadi.footHers.h} loading="lazy" decoding="async" />
+                <span className={r.stepNum}>{i + 1}</span>
+              </span>
+            ))}
+          </span>
           {wedding.story.map((st, i) => (
             <li key={st.title} className={sc.step}>
-              <span className={r.stepDot} aria-hidden="true" />
               <div className={sc.stepPhoto} data-reveal={i % 2 ? "flip-r" : "flip-l"}>
                 <div className={styles.storyPhotoInner} data-tilt="6">
                   <Photo k={st.photo} sizes="(min-width: 760px) 440px, 88vw" />
@@ -186,27 +200,30 @@ export default function Invitation() {
         </ol>
       </section>
 
-      {/* ── 6 · Celebrations ─────────────────────────────────── */}
-      <section className={`${styles.section} ${styles.maroon} ${sc.events} ${r.events}`} id="events" style={{ backgroundColor: maroon.color }}>
-        <div className={sc.eventsDecor} aria-hidden="true">
-          <img className={r.mBells} src={maroon.bells.src} alt="" width={maroon.bells.w} height={maroon.bells.h} loading="lazy" decoding="async" />
-          <div className={r.mKolam} data-reveal="kolam">
-            <img src={maroon.kolam.src} alt="" width={maroon.kolam.w} height={maroon.kolam.h} loading="lazy" decoding="async" />
+      {/* ── 6 · Celebrations: pinned, sideways through the maroon hall ── */}
+      <Events
+        heading={<Heading kicker="Join us for" title="The Celebrations" light />}
+        decor={
+          <>
+            <img data-depth="8" className={r.mBells} src={maroon.bells.src} alt="" width={maroon.bells.w} height={maroon.bells.h} loading="lazy" decoding="async" />
+            <div className={r.mKolam} data-reveal="kolam">
+              <img src={maroon.kolam.src} alt="" width={maroon.kolam.w} height={maroon.kolam.h} loading="lazy" decoding="async" />
+            </div>
+            <img data-depth="26" className={r.mRight} src={maroon.right.src} alt="" width={maroon.right.w} height={maroon.right.h} loading="lazy" decoding="async" />
+            <img data-depth="18" className={r.mFlowers} src={maroon.flowers.src} alt="" width={maroon.flowers.w} height={maroon.flowers.h} loading="lazy" decoding="async" />
+          </>
+        }
+        foot={
+          <div className={r.mFoot} aria-hidden="true">
+            <img data-depth="30" src={maroon.urli.src} alt="" width={maroon.urli.w} height={maroon.urli.h} loading="lazy" decoding="async" />
           </div>
-          <img className={r.mRight} src={maroon.right.src} alt="" width={maroon.right.w} height={maroon.right.h} loading="lazy" decoding="async" data-parallax="0.06" />
-          <img className={r.mFlowers} src={maroon.flowers.src} alt="" width={maroon.flowers.w} height={maroon.flowers.h} loading="lazy" decoding="async" />
-        </div>
-        <Heading kicker="Join us for" title="The Celebrations" light />
-        <Events />
-        <div className={r.mFoot} aria-hidden="true">
-          <img src={maroon.urli.src} alt="" width={maroon.urli.w} height={maroon.urli.h} loading="lazy" decoding="async" />
-        </div>
-      </section>
+        }
+      />
 
       {/* ── 7 · Venue ────────────────────────────────────────── */}
       <section className={`${styles.section} ${sc.venue} ${r.venue}`} id="venue">
         {(["L", "R"] as const).map((side) => (
-          <div key={side} className={`${r.venueSide} ${r[`venueSide${side}`]}`} aria-hidden="true" data-parallax="0.06">
+          <div key={side} className={`${r.venueSide} ${r[`venueSide${side}`]}`} aria-hidden="true" data-parallax="0.06" data-depth="20">
             <img src={banana.src} alt="" width={banana.w} height={banana.h} loading="lazy" decoding="async" />
           </div>
         ))}
@@ -250,7 +267,7 @@ export default function Invitation() {
       {/* ── 9 · Countdown ────────────────────────────────────── */}
       <section className={`${styles.section} ${r.countdown}`} id="countdown">
         <div className={r.countdownArt} data-reveal="zoom" aria-hidden="true">
-          <img src={scenes.intro} alt="" width={640} height={1136} loading="lazy" decoding="async" data-parallax="0.04" />
+          <img src={scenes.intro} alt="" width={640} height={1136} loading="lazy" decoding="async" data-parallax="0.04" data-depth="-10" />
         </div>
         <div className={r.countdownBody}>
           <Heading kicker="The wedding day" title="Counting the Days" />
@@ -300,6 +317,7 @@ export default function Invitation() {
 
       {/* ── 11 · The hands meet ────────────────────────────── */}
       <Closing />
+      </div>
 
       <Music />
     </>

@@ -29,10 +29,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        {/* turn on scroll animations before first paint (skipped for reduced motion / no JS) */}
+        {/* before first paint: scroll animations on (unless reduced motion), and the rest of the
+            invitation stays closed until the card is opened (deep links like /#events skip that) */}
         <script
           dangerouslySetInnerHTML={{
-            __html: `document.documentElement.dataset.js="";if(!matchMedia("(prefers-reduced-motion: reduce)").matches)document.documentElement.dataset.motion="on"`,
+            __html: `var d=document.documentElement;d.dataset.js="";if(!matchMedia("(prefers-reduced-motion: reduce)").matches)d.dataset.motion="on";if(!location.hash)d.dataset.gate=""`,
           }}
         />
       </head>

@@ -391,7 +391,7 @@
   .step {
     grid-template-columns: 1fr;
     gap: 16px;
-    padding-left: 36px;
+    padding-left: 52px;
   }
   .step:nth-child(odd) .stepPhoto {
     order: 0;
@@ -554,5 +554,24 @@
   }
   .coverHint {
     animation: none;
+  }
+}
+
+/* shown under the closed card until it is opened the first time */
+.gateHint {
+  display: none;
+}
+html[data-gate] .gateHint {
+  display: block;
+  margin-top: 18px;
+  font: 600 0.74rem/1.4 var(--font-ui);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--maroon);
+  animation: hintPulse 2.4s ease-in-out infinite;
+}
+@keyframes hintPulse {
+  50% {
+    opacity: 0.45;
   }
 }

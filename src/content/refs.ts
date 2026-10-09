@@ -68,6 +68,9 @@ export const saptapadi = {
   feet: cut("/ref/scenes/feet.webp", 0, 0, 736, 558),
   leafL: cut("/ref/scenes/leaf-l.webp", 0, 877, 192, 431),
   leafR: cut("/ref/scenes/leaf-r.webp", 484, 891, 252, 417),
+  /** his bare foot below the green-bordered veshti, and hers below the red silk — the footsteps */
+  footHis: cut("/ref/scenes/foot-his.webp", 38, 298, 284, 199),
+  footHers: cut("/ref/scenes/foot-hers.webp", 442, 423, 260, 74),
 };
 
 /** ref 9 — https://pin.it/5LwCWxJWU (hands under a marigold-and-bell arch) */

@@ -4,6 +4,8 @@
  *  - [data-reveal]   gets [data-in] once it scrolls into view → CSS plays a 3D entrance
  *  - [data-parallax] moves at its own depth while scrolling (translate3d only — stays sharp)
  *  - [data-tilt]     tilts in 3D toward the pointer (mouse / pen only)
+ *  - [data-depth]    image layers drift by their depth with the pointer (or the phone's tilt,
+ *                    or a slow drift) — --dx/--dy on <html>, used in globals.css
  *  - --progress on <html> drives the thin gold scroll bar
  * Everything is skipped when the guest prefers reduced motion.
  */
@@ -33,7 +35,12 @@ export default function Motion() {
     document.querySelectorAll("[data-reveal]").forEach((el) => io.observe(el));
 
     /* parallax + progress */
-    const layers = [...document.querySelectorAll<HTMLElement>("[data-parallax]")];
+    let layers = [...document.querySelectorAll<HTMLElement>("[data-parallax]")];
+    const onCard = () => {
+      layers = [...document.querySelectorAll<HTMLElement>("[data-parallax]")];
+      onScroll();
+    };
+    addEventListener("card:open", onCard);
     let raf = 0;
     const frame = () => {
       raf = 0;
@@ -55,6 +62,39 @@ export default function Motion() {
     frame();
     addEventListener("scroll", onScroll, { passive: true });
     addEventListener("resize", onScroll);
+
+    /* depth drift: pointer on desktop, device tilt (where allowed) or a slow drift on phones */
+    let dtx = 0, dty = 0, dx = 0, dy = 0, draf = 0, tilted = false;
+    const onPointer = (e: PointerEvent) => {
+      if (e.pointerType !== "mouse" && e.pointerType !== "pen") return;
+      dtx = (e.clientX / innerWidth) * 2 - 1;
+      dty = (e.clientY / innerHeight) * 2 - 1;
+    };
+    const onTilt = (e: DeviceOrientationEvent) => {
+      if (e.gamma == null || e.beta == null) return;
+      tilted = true;
+      dtx = Math.max(-1, Math.min(1, e.gamma / 25));
+      dty = Math.max(-1, Math.min(1, (e.beta - 45) / 30));
+    };
+    const fineDepth = matchMedia("(hover: hover) and (pointer: fine)").matches;
+    const depthTick = (t: number) => {
+      if (!fineDepth && !tilted) {
+        dtx = Math.sin(t / 3400) * 0.5;
+        dty = Math.cos(t / 4300) * 0.3;
+      }
+      const nx = dx + (dtx - dx) * 0.07;
+      const ny = dy + (dty - dy) * 0.07;
+      if (Math.abs(nx - dx) > 0.0005 || Math.abs(ny - dy) > 0.0005) {
+        dx = nx;
+        dy = ny;
+        root.style.setProperty("--dx", dx.toFixed(3));
+        root.style.setProperty("--dy", dy.toFixed(3));
+      }
+      draf = requestAnimationFrame(depthTick);
+    };
+    addEventListener("pointermove", onPointer, { passive: true });
+    addEventListener("deviceorientation", onTilt, { passive: true });
+    draf = requestAnimationFrame(depthTick);
 
     /* pointer tilt */
     const fine = matchMedia("(hover: hover) and (pointer: fine)").matches;
@@ -85,6 +125,10 @@ export default function Motion() {
     return () => {
       io.disconnect();
       cancelAnimationFrame(raf);
+      cancelAnimationFrame(draf);
+      removeEventListener("pointermove", onPointer);
+      removeEventListener("deviceorientation", onTilt);
+      removeEventListener("card:open", onCard);
       removeEventListener("scroll", onScroll);
       removeEventListener("resize", onScroll);
       tilts.forEach((el) => {

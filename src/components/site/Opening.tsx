@@ -12,6 +12,7 @@
  * - Muted, inline autoplay (allowed by every browser). If autoplay is refused, the video
  *   fails or the guest prefers reduced motion, the finished end card is shown at once.
  * - "Skip intro" (or Esc) jumps to the end card; a sound toggle unmutes the clip.
+ * - The page cannot be scrolled (wheel, touch or keys) until the guest opens the invitation.
  * - Portrait screens fill edge to edge; wide screens keep the clip's 9:16 framing with a
  *   soft, blurred extension of the same frame on either side.
  * - No JS → hidden by CSS, so the page is never blocked.
@@ -29,6 +30,7 @@ export default function Opening() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const enterRef = useRef<HTMLButtonElement>(null);
   const timer = useRef<number>(0);
+  const unlock = useRef<() => void>(() => {});
   const { bride, groom } = wedding;
 
   const showCard = useCallback(() => {
@@ -53,6 +55,7 @@ export default function Opening() {
     timer.current = window.setTimeout(
       () => {
         setStage("gone");
+        unlock.current();
         root.style.removeProperty("overflow");
         window.dispatchEvent(new Event("opening:done"));
       },
@@ -76,13 +79,25 @@ export default function Opening() {
     } else {
       v.play().catch(() => setStage("card"));
     }
+    const SCROLL_KEYS = [" ", "PageDown", "PageUp", "ArrowDown", "ArrowUp", "Home", "End"];
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") showCard();
+      // the page stays put until the invitation is opened
+      else if (SCROLL_KEYS.includes(e.key) && !(e.target instanceof HTMLButtonElement && e.key === " ")) e.preventDefault();
     };
+    const block = (e: Event) => e.preventDefault();
     addEventListener("keydown", onKey);
+    addEventListener("wheel", block, { passive: false });
+    addEventListener("touchmove", block, { passive: false });
+    window.scrollTo(0, 0);
+    unlock.current = () => {
+      removeEventListener("wheel", block);
+      removeEventListener("touchmove", block);
+      removeEventListener("keydown", onKey);
+    };
     return () => {
       clearTimeout(timer.current);
-      removeEventListener("keydown", onKey);
+      unlock.current();
       root.style.removeProperty("overflow");
     };
   }, [showCard]);

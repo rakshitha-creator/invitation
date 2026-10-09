@@ -18,11 +18,11 @@
   --cream: #fffaf1;
   --maroon: #6e1a2c;
   --maroon-deep: #4c1020;
-  --gold: #b0843a;
+  --gold: #9c7130;
   --gold-light: #e2c27f;
   --gold-pale: #f4e4bd;
   --ink: #3a2418;
-  --ink-soft: #6d5444;
+  --ink-soft: #5a4234;
   --white: #ffffff;
 
   --font-display: "Cormorant Garamond", Georgia, "Times New Roman", serif;
@@ -328,4 +328,19 @@ html[data-motion="on"] [data-in] .kolamDots {
 /* the gopuram doorway brightens as you walk towards it */
 .doorGlow {
   opacity: calc(0.55 + var(--p, 0) * 0.9);
+}
+
+/* crisper text and images */
+html {
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+img {
+  image-rendering: auto;
+}
+
+/* ── depth: image layers drift with the pointer (set in Motion.tsx) and with scroll (--py).
+   Uses the individual `translate` property so it stacks on top of any transform. ── */
+html[data-motion="on"] [data-depth] {
+  translate: calc(var(--dx, 0) * var(--depth, 10) * 1px) calc(var(--dy, 0) * var(--depth, 10) * 1px + var(--py, 0px));
 }

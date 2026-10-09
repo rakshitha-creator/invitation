@@ -4,8 +4,10 @@
  * Closed: a maroon silk cover with gold foil, the kolam from reference 6 and the names.
  * Tap / click / Enter → the cover swings open on its hinge (CSS 3D, real depth and
  * shadow) and the printed inner page is revealed.
+ * The rest of the invitation (story, celebrations, venue…) stays closed until the card is
+ * opened the first time: <html data-gate> hides it, and opening the card lifts it.
  */
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import s from "./scene.module.css";
 import { maroon } from "@/content/refs";
 import { Divider } from "./Ornament";
@@ -13,6 +15,15 @@ import { wedding } from "@/content/wedding";
 
 export default function InviteCard() {
   const [open, setOpen] = useState(false);
+  const toggle = useCallback(() => {
+    setOpen((o) => !o);
+    const root = document.documentElement;
+    if ("gate" in root.dataset) {
+      delete root.dataset.gate;
+      // let the newly shown sections lay out, then re-measure the scroll scenes
+      requestAnimationFrame(() => window.dispatchEvent(new Event("card:open")));
+    }
+  }, []);
   const { bride, groom } = wedding;
 
   return (
@@ -67,7 +78,7 @@ export default function InviteCard() {
         <button
           type="button"
           className={s.cover}
-          onClick={() => setOpen((o) => !o)}
+          onClick={toggle}
           aria-expanded={open}
           aria-label={open ? "Close the invitation" : `Open the wedding invitation of ${bride} and ${groom}`}
         >
@@ -90,6 +101,9 @@ export default function InviteCard() {
           </span>
         </button>
       </div>
+      <p className={s.gateHint} aria-live="polite">
+        Open the card to continue the invitation
+      </p>
     </div>
   );
 }

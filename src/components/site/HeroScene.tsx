@@ -7,7 +7,7 @@
  *
  *   far   watercolour wash (the reference's own paper, objects removed)
  *         three hanging brass bells · carved pillar · banana leaves
- *   mid   names + date
+ *   mid   names + date (on the picture plane, so the text stays perfectly sharp)
  *   near  lotus pond with the elephant table · the couple · kuthuvilakku · kalash
  *
  * Every piece keeps its original size and its distance to the nearest edge of the
@@ -76,7 +76,7 @@ export default function HeroScene() {
               <Piece c={hero.leaves} anchor="tr" className={s.leaves} eager />
             </div>
 
-            <div className={`${s.layer} ${s.copy}`} style={z(-60, 3)}>
+            <div className={`${s.layer} ${s.copy}`} style={z(0, 3)}>
               <p className={s.kicker}>The wedding of</p>
               <h1 className={s.names} id="hero-names">
                 <span>{bride}</span>
