@@ -3,7 +3,6 @@
  * Scroll-driven camera work (GSAP + ScrollTrigger), one place, cleaned up on unmount.
  *
  *   [data-scene="hero"]     --p 0→1 while its sticky stage is pinned → dolly into the scene
- *   [data-scene="gateway"]  --p 0→1 → walk up to and through the gopuram doorway
  *   [data-scene="story"]    --p 0→1 → the saptapadi path draws down the page
  *   [data-scene="closing"]  --p 0→1 → the two hands drift together
  *   hero world              --mx/--my from the pointer (or a slow drift on touch)
@@ -26,7 +25,6 @@ export default function Cinema() {
         });
       };
       scrub('[data-scene="hero"]', "top top", "bottom bottom");
-      scrub('[data-scene="gateway"]', "top top", "bottom bottom");
       scrub('[data-scene="story"]', "top 70%", "bottom 60%", 0.4);
       scrub('[data-scene="closing"]', "top 85%", "bottom bottom", 1);
     });

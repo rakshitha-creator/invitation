@@ -91,7 +91,7 @@ export default function HeroScene() {
                 </span>
               </p>
               <p className={s.subtitle}>{wedding.hero.subtitle}</p>
-              <a href="#gateway" className={s.cue}>
+              <a href="#invite" className={s.cue}>
                 <span>Scroll to enter</span>
                 <i aria-hidden="true" />
               </a>

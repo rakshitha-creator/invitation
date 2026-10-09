@@ -3,7 +3,7 @@
  * own Pinterest references (the images themselves, cut into depth layers — nothing
  * redrawn or generated):
  *
- *   Opening video (ref 1) → Hero 3D scene (ref 2) → walk through the gopuram (ref 3) →
+ *   Opening video (ref 1) → Hero 3D scene (ref 2) →
  *   the 3D invitation card between carved pillars (ref 4) →
  *   Bride & Groom in the watercolour courtyard (ref 7) → Our Story, the seven steps (ref 8) →
  *   Celebrations in the maroon hall with bells, kolam and lamp (ref 6), each event on its
@@ -30,7 +30,6 @@ import Motion from "./Motion";
 import Cinema from "./Cinema";
 import Opening from "./Opening";
 import HeroScene from "./HeroScene";
-import Gateway from "./Gateway";
 import InviteCard from "./InviteCard";
 import Closing from "./Closing";
 import sc from "./scene.module.css";
@@ -64,7 +63,7 @@ function Photo({ k, sizes, className, priority }: { k: PhotoKey; sizes: string; 
 
 function Heading({ kicker, title, light }: { kicker: string; title: string; light?: boolean }) {
   return (
-    <header className={styles.heading} data-light={light || undefined}>
+    <header className={styles.heading} data-light={light || undefined} data-scroll3d>
       <p className={styles.kicker} data-reveal="up" style={d(1)}>
         {kicker}
       </p>
@@ -89,9 +88,6 @@ export default function Invitation() {
 
       {/* ── 1 · Hero: the layered scene ─────────────────────── */}
       <HeroScene />
-
-      {/* ── 2 · Through the gopuram ──────────────────────────── */}
-      <Gateway />
 
       {/* ── 3 · The invitation card ──────────────────────────── */}
       <section className={`${sc.invite} ${r.invite}`} id="invite" aria-labelledby="invite-title">
@@ -132,7 +128,7 @@ export default function Invitation() {
           ))}
         </div>
         <Heading kicker="Meet" title="The Bride & Groom" />
-        <div className={styles.couple}>
+        <div className={styles.couple} data-scroll3d>
           {(["bride", "groom"] as const).map((who, i) => (
             <figure key={who} className={styles.person} data-reveal={who === "bride" ? "flip-l" : "flip-r"} style={d(i * 2)}>
               <div className={styles.portrait} data-tilt="8">
@@ -178,7 +174,7 @@ export default function Invitation() {
             ))}
           </span>
           {wedding.story.map((st, i) => (
-            <li key={st.title} className={sc.step}>
+            <li key={st.title} className={sc.step} data-scroll3d>
               <div className={sc.stepPhoto} data-reveal={i % 2 ? "flip-r" : "flip-l"}>
                 <div className={styles.storyPhotoInner} data-tilt="6">
                   <Photo k={st.photo} sizes="(min-width: 760px) 440px, 88vw" />
@@ -228,6 +224,7 @@ export default function Invitation() {
           </div>
         ))}
         <Heading kicker="Where" title="The Venue" />
+        <div data-scroll3d>
         <div className={sc.venueCard} data-reveal="arch">
           <div className={sc.venueInner} data-tilt="4">
             <p className={sc.venueCity}>{wedding.place.city}</p>
@@ -248,12 +245,13 @@ export default function Invitation() {
             </div>
           </div>
         </div>
+        </div>
       </section>
 
       {/* ── 8 · Gallery ──────────────────────────────────────── */}
       <section className={`${styles.section} ${styles.paper} ${sc.gallerySection}`} id="gallery">
         <Heading kicker="Moments" title="Held in the Light" />
-        <div className={`${styles.gallery} ${sc.gallery}`}>
+        <div className={`${styles.gallery} ${sc.gallery}`} data-scroll3d>
           {(["couple-01", "ceremony", "couple-02", "rings", "pre-wedding", "mehendi"] as const).map((k, i) => (
             <div key={k} className={styles.galleryItem} data-k={k} data-reveal="zoom" style={d(i)}>
               <div className={sc.galleryInner} data-tilt="7">
@@ -269,14 +267,14 @@ export default function Invitation() {
         <div className={r.countdownArt} data-reveal="zoom" aria-hidden="true">
           <img src={scenes.intro} alt="" width={640} height={1136} loading="lazy" decoding="async" data-parallax="0.04" data-depth="-10" />
         </div>
-        <div className={r.countdownBody}>
+        <div className={r.countdownBody} data-scroll3d>
           <Heading kicker="The wedding day" title="Counting the Days" />
           <Countdown />
         </div>
       </section>
       {/* ── 10 · RSVP + Instagram ──────────────────────────── */}
       <section className={`${styles.section} ${styles.maroon}`} id="rsvp">
-        <div className={styles.cards}>
+        <div className={styles.cards} data-scroll3d>
           <div data-reveal="arch" style={d(0)}>
             <div className={styles.card} data-tilt="5">
               <h2 className={styles.cardTitle}>{wedding.rsvp.heading}</h2>

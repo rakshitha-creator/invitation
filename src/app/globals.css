@@ -134,8 +134,8 @@ html[data-motion="on"] [data-reveal] {
   opacity: 0;
   transform-origin: 50% 100%;
   transition:
-    opacity 0.9s ease,
-    transform 1.25s var(--ease-out);
+    opacity 1s cubic-bezier(0.33, 1, 0.68, 1),
+    transform 1.4s var(--ease-out);
   transition-delay: calc(var(--d, 0) * 90ms);
   will-change: transform, opacity;
 }
@@ -178,7 +178,25 @@ html[data-motion="on"] [data-reveal][data-in] {
   transform: none;
 }
 
-/* pointer tilt (mouse / pen only — set up in Motion.tsx) */
+/* scroll 3D: blocks roll through depth as they pass the screen (--sp −1…1, --sa = |--sp|,
+   eased every frame in Motion.tsx). Works the same on phones and laptops. */
+html[data-motion="on"] [data-scroll3d] {
+  transform-origin: 50% 50%;
+  transform: perspective(1100px) translate3d(0, calc(var(--sp, 0) * 34px), calc(var(--sa, 0) * -170px))
+    rotateX(calc(var(--sp, 0) * 16deg)) rotateY(calc(var(--dx, 0) * var(--sa, 0) * 6deg));
+  opacity: calc(1 - var(--sa, 0) * 0.45);
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+}
+@media (max-width: 700px) {
+  /* a slightly shallower drum on narrow screens so nothing tips out of the viewport */
+  html[data-motion="on"] [data-scroll3d] {
+    transform: perspective(800px) translate3d(0, calc(var(--sp, 0) * 24px), calc(var(--sa, 0) * -120px))
+      rotateX(calc(var(--sp, 0) * 13deg)) rotateY(calc(var(--dx, 0) * var(--sa, 0) * 5deg));
+  }
+}
+
+/* pointer tilt (mouse / pen — on touch screens Motion.tsx drives it from scroll + phone tilt) */
 [data-tilt] {
   position: relative;
   transform: perspective(1000px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
@@ -186,6 +204,14 @@ html[data-motion="on"] [data-reveal][data-in] {
 }
 [data-tilt][data-hover] {
   transition-duration: 0.15s;
+}
+html[data-motion="on"] [data-tilt][data-live] {
+  /* eased per frame in JS already — a CSS transition on top would only add lag */
+  transition: none;
+  will-change: transform;
+}
+html[data-motion="on"] [data-tilt][data-live]::after {
+  opacity: 0.6;
 }
 [data-tilt]::after {
   /* a soft moving highlight that follows the pointer */
@@ -203,8 +229,10 @@ html[data-motion="on"] [data-reveal][data-in] {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  [data-tilt] {
+  [data-tilt],
+  [data-scroll3d] {
     transform: none !important;
+    opacity: 1 !important;
   }
 }
 
