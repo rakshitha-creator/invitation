@@ -1,0 +1,2 @@
+// Obsolete file from the previous design — not used. Safe to delete.
+export {};

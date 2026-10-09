@@ -1,0 +1,228 @@
+/* Cinematic opening — the reference 1 video (see REFERENCES.md) */
+.opening {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  background: #3a0b0f;
+  color: #fff;
+  overflow: hidden;
+  transition: opacity 1.1s ease 0.2s;
+}
+html:not([data-js]) .opening {
+  display: none;
+}
+
+/* blurred extension of the frame for wide screens */
+.backdrop {
+  position: absolute;
+  inset: -6%;
+  background-size: cover;
+  background-position: center;
+  filter: blur(28px) brightness(0.55) saturate(1.1);
+  transform: scale(1.08);
+}
+
+/* the 9:16 frame of the clip — contain on wide screens, cover on tall ones */
+.frame {
+  position: relative;
+  container-type: size;
+  height: 100svh;
+  aspect-ratio: 9 / 16;
+  box-shadow: 0 0 80px 10px rgb(20 2 4 / 0.6);
+  transition:
+    transform 1.3s cubic-bezier(0.7, 0, 0.3, 1),
+    filter 1.2s ease;
+}
+@media (max-aspect-ratio: 3 / 4) {
+  .frame {
+    height: auto;
+    width: max(100vw, 56.25svh);
+    box-shadow: none;
+  }
+}
+.video,
+.endcard {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.endcard {
+  opacity: 0;
+  transition: opacity 1s ease;
+}
+
+/* ── the end card: names written into the arch ── */
+.card {
+  position: absolute;
+  /* the empty maroon panel of the arch, above the illustrated couple */
+  inset: 15% 12% 38%;
+  display: grid;
+  align-content: start;
+  justify-items: center;
+  text-align: center;
+  pointer-events: none;
+}
+.card > * {
+  opacity: 0;
+  filter: blur(6px);
+  translate: 0 1.2cqh;
+  transition:
+    opacity 1.1s ease,
+    filter 1.1s ease,
+    translate 1.4s cubic-bezier(0.16, 1, 0.3, 1);
+  transition-delay: calc(0.45s + var(--i) * 0.32s);
+}
+.together {
+  font-size: 2.6cqw;
+  font-weight: 600;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: #f3d9a6;
+}
+.names {
+  display: grid;
+  justify-items: center;
+  margin-top: 1.4cqh;
+  font-family: var(--font-script);
+  font-weight: 400;
+  line-height: 1;
+  color: #fff;
+  text-shadow: 0 2px 10px rgb(30 0 4 / 0.35);
+}
+.names span,
+.names em {
+  display: block;
+  opacity: 0;
+  filter: blur(8px);
+  transition:
+    opacity 1.2s ease,
+    filter 1.2s ease;
+  transition-delay: calc(0.45s + var(--i) * 0.32s);
+}
+.names span {
+  font-size: 13.5cqw;
+  padding: 0 0.15em;
+}
+.names em {
+  font-style: normal;
+  font-size: 8.5cqw;
+  margin: -0.8cqh 0 0;
+}
+.date {
+  margin-top: 2cqh;
+  font-family: var(--font-ui);
+  font-size: 4.3cqw;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+.place {
+  margin-top: 0.4cqh;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 5cqw;
+  color: #f3d9a6;
+}
+.enter {
+  pointer-events: auto;
+  margin-top: 1.8cqh;
+  min-height: 46px;
+  padding: 1.1cqh 6cqw;
+  border: 1px solid rgb(243 217 166 / 0.85);
+  border-radius: 999px;
+  background: linear-gradient(180deg, #e7c47c, #b0843a);
+  color: #3a0b0f;
+  font: 700 max(12.5px, 3cqw) / 1.2 var(--font-ui);
+  white-space: nowrap;
+  letter-spacing: 0.08em;
+  box-shadow:
+    0 10px 24px -10px rgb(20 0 4 / 0.8),
+    inset 0 1px 0 rgb(255 255 255 / 0.5);
+  cursor: pointer;
+  transition:
+    opacity 1.1s ease,
+    filter 1.1s ease,
+    translate 1.4s cubic-bezier(0.16, 1, 0.3, 1),
+    scale 0.3s ease;
+  transition-delay: calc(0.45s + var(--i) * 0.32s), calc(0.45s + var(--i) * 0.32s), calc(0.45s + var(--i) * 0.32s), 0s;
+}
+.enter:hover {
+  scale: 1.04;
+}
+.enter:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 4px;
+}
+
+.opening:is([data-stage="card"], [data-stage="leave"]) .endcard {
+  opacity: 1;
+}
+.opening:is([data-stage="card"], [data-stage="leave"]) .card > *,
+.opening:is([data-stage="card"], [data-stage="leave"]) .names :is(span, em) {
+  opacity: 1;
+  filter: none;
+  translate: 0 0;
+}
+.opening[data-stage="card"] .enter {
+  animation: breathe 2.6s ease-in-out 3.2s infinite;
+}
+@keyframes breathe {
+  50% {
+    box-shadow:
+      0 10px 30px -6px rgb(231 196 124 / 0.75),
+      inset 0 1px 0 rgb(255 255 255 / 0.5);
+  }
+}
+
+/* leaving: the camera pushes into the arch while everything fades */
+.opening[data-stage="leave"] {
+  opacity: 0;
+  pointer-events: none;
+}
+.opening[data-stage="leave"] .frame {
+  transform: scale(1.18);
+  filter: brightness(1.25);
+}
+
+/* skip / sound / replay */
+.controls {
+  position: absolute;
+  right: calc(env(safe-area-inset-right) + 14px);
+  bottom: calc(env(safe-area-inset-bottom) + 14px);
+  z-index: 2;
+  display: flex;
+  gap: 8px;
+}
+.ctrl {
+  min-height: 44px;
+  padding: 0 16px;
+  border: 1px solid rgb(255 240 210 / 0.45);
+  border-radius: 999px;
+  background: rgb(40 6 10 / 0.55);
+  backdrop-filter: blur(6px);
+  color: #fbe9c6;
+  font: 600 0.72rem / 1 var(--font-ui);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+.ctrl:hover {
+  background: rgb(60 10 16 / 0.75);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card > *,
+  .names :is(span, em),
+  .endcard,
+  .frame,
+  .opening {
+    transition: none !important;
+  }
+  .opening[data-stage="card"] .enter {
+    animation: none;
+  }
+}

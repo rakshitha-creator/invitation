@@ -1,0 +1,764 @@
+/* ─────────────────────────────────────────────────────────────
+   Scenes built from the Pinterest reference images (src/content/refs.ts):
+   hero (ref 2) · gateway (ref 3) · invitation pillars (ref 4) · venue (ref 5) ·
+   celebrations hall (ref 6) · courtyard (ref 7) · saptapadi (ref 8) · closing (ref 9) ·
+   countdown (ref 10). Scroll progress arrives as --p (0→1) from Cinema.tsx.
+   ───────────────────────────────────────────────────────────── */
+
+.kicker {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+/* ═════════════ HERO (ref 2) ═════════════ */
+.hero {
+  --p: 0;
+  --mx: 0;
+  --my: 0;
+  /* 1 px of the 1080×1920 reference → screen. Height-based, so a 9:16 phone shows the
+     reference 1:1 and wider screens open the same scene out sideways. */
+  --s: calc(100svh / 1920);
+  position: relative;
+  height: 210svh;
+  background: #f3ead2;
+}
+@media (min-aspect-ratio: 1 / 1) {
+  .hero {
+    --s: calc(120svh / 1920);
+  }
+}
+.sticky {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  overflow: hidden;
+}
+.stage {
+  position: absolute;
+  inset: 0;
+  perspective: 1000px;
+  perspective-origin: 50% 62%;
+}
+.world {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  transform: translateZ(calc(var(--p) * 540px)) rotateX(calc(var(--my) * -1.4deg)) rotateY(calc(var(--mx) * 2.4deg));
+}
+.layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  /* push back by --z and scale back up, so at rest it lines up with the reference */
+  transform: translateZ(calc(var(--z) * 1px)) scale(calc((1000 - var(--z)) / 1000));
+  transition:
+    opacity 1.4s ease,
+    translate 2s cubic-bezier(0.16, 1, 0.3, 1);
+  transition-delay: calc(var(--i) * 140ms + 150ms);
+}
+html[data-js]:not([data-entered]) .layer {
+  opacity: 0;
+  translate: 0 5%;
+}
+html[data-js]:not([data-entered]) .wash {
+  translate: 0 0;
+}
+.wash {
+  inset: -4%;
+  background-size: cover;
+  background-position: 50% 50%;
+}
+
+/* a piece of a reference, put back at its original size and edge distance */
+.piece {
+  position: absolute;
+  display: block;
+  width: calc(var(--w) * var(--s));
+  height: calc(var(--h) * var(--s));
+  max-width: none;
+}
+.piece[data-anchor="tl"] {
+  left: calc(var(--x) * var(--s));
+  top: calc(var(--y) * var(--s));
+}
+.piece[data-anchor="tr"] {
+  right: calc((1080 - var(--x) - var(--w)) * var(--s));
+  top: calc(var(--y) * var(--s));
+}
+.piece[data-anchor="bl"] {
+  left: calc(var(--x) * var(--s));
+  bottom: calc((1920 - var(--y) - var(--h)) * var(--s));
+}
+.piece[data-anchor="br"] {
+  right: calc((1080 - var(--x) - var(--w)) * var(--s));
+  bottom: calc((1920 - var(--y) - var(--h)) * var(--s));
+}
+.piece[data-anchor="bc"] {
+  left: calc(50% + (var(--x) - 540) * var(--s));
+  bottom: calc((1920 - var(--y) - var(--h)) * var(--s));
+}
+.bell {
+  transform-origin: 50% 0;
+  animation: swing 3.8s ease-in-out infinite alternate;
+}
+.leaves {
+  transform-origin: 85% 10%;
+  animation: sway 7s ease-in-out infinite alternate;
+}
+@keyframes swing {
+  from {
+    rotate: -2.2deg;
+  }
+  to {
+    rotate: 2.2deg;
+  }
+}
+@keyframes sway {
+  from {
+    rotate: -1.2deg;
+  }
+  to {
+    rotate: 1.4deg;
+  }
+}
+
+/* names, in the empty watercolour sky of the reference */
+.copy {
+  display: grid;
+  align-content: start;
+  justify-items: center;
+  gap: 10px;
+  padding: calc(env(safe-area-inset-top) + 25svh) var(--gutter) 0;
+  text-align: center;
+}
+@media (min-aspect-ratio: 1 / 1) {
+  .copy {
+    padding-top: calc(17svh);
+  }
+}
+.copy > * {
+  opacity: clamp(0, calc(1 - var(--p) * 2.6), 1);
+}
+.copy .kicker {
+  color: #8a6326;
+}
+.names {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 0.18em;
+  font-family: var(--font-script);
+  font-weight: 400;
+  font-size: clamp(3.6rem, 12svh, 8rem);
+  line-height: 1;
+  color: #6e1a2c;
+  text-shadow: 0 2px 0 rgb(255 248 230 / 0.9);
+  padding: 0.08em 0.2em;
+}
+.names em {
+  font-style: normal;
+  font-size: 0.55em;
+  color: var(--gold);
+}
+.when {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 4px 12px;
+  max-width: 720px;
+  font-family: var(--font-display);
+  font-size: clamp(1.02rem, 2.5svh, 1.35rem);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #5b3a22;
+}
+.when span:nth-child(2) {
+  color: var(--gold);
+}
+.subtitle {
+  max-width: 30ch;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: clamp(1.05rem, 2.4svh, 1.3rem);
+  line-height: 1.4;
+  color: #6d5444;
+}
+.cue {
+  pointer-events: auto;
+  margin-top: 6px;
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  min-height: 46px;
+  padding: 6px 12px;
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--maroon);
+}
+.cue i {
+  width: 1px;
+  height: 34px;
+  background: linear-gradient(var(--gold), transparent);
+  transform-origin: top;
+  animation: cue 2.2s ease-in-out infinite;
+}
+@keyframes cue {
+  0% {
+    transform: scaleY(0);
+  }
+  50% {
+    transform: scaleY(1);
+  }
+  100% {
+    transform: scaleY(1);
+    opacity: 0;
+  }
+}
+.heroFade {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(circle at 50% 70%, rgb(243 234 210 / 0), #f3ead2 70%);
+  opacity: clamp(0, calc((var(--p) - 0.55) * 2.4), 1);
+}
+/* phones: a compact block in the reference's empty sky, between bells and lotuses */
+@media (max-aspect-ratio: 3 / 4) {
+  .copy {
+    gap: 8px;
+    padding-top: calc(env(safe-area-inset-top) + 22svh);
+  }
+  .names {
+    font-size: clamp(3rem, 16vw, 5.4rem);
+  }
+  .when {
+    flex-direction: column;
+    gap: 2px;
+    font-size: 0.92rem;
+  }
+  .when span:nth-child(2) {
+    display: none;
+  }
+  .subtitle {
+    font-size: 1rem;
+    max-width: 26ch;
+  }
+  .cue {
+    margin-top: 0;
+  }
+}
+@media (max-height: 520px) and (orientation: landscape) {
+  .copy {
+    padding-top: 18px;
+  }
+  .names {
+    font-size: 3.2rem;
+  }
+  .subtitle {
+    display: none;
+  }
+}
+
+/* ═════════════ GATEWAY (ref 3) ═════════════ */
+.gateway {
+  --p: 0;
+  position: relative;
+  height: 230svh;
+  background: #f3ead2;
+}
+.gateSticky {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  overflow: hidden;
+}
+.gateSky {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  transform: scale(calc(1 + var(--p) * 0.25));
+}
+.gateFloor {
+  position: absolute;
+  left: -10%;
+  right: -10%;
+  bottom: 0;
+  height: 19svh;
+  background: linear-gradient(180deg, #cdb08a, #b4936a);
+  perspective: 600px;
+  overflow: hidden;
+  opacity: clamp(0, calc(1 - var(--p) * 2), 1);
+}
+.gateKolam {
+  position: absolute;
+  left: 50%;
+  top: -55%;
+  width: min(62vw, 520px);
+  translate: -50% 0;
+  transform: rotateX(70deg);
+  transform-origin: 50% 0;
+  /* the reference 6 kolam, chalked in rice-flour white on the stone */
+  filter: brightness(0) invert(1);
+  opacity: 0.85;
+}
+.gopuramWrap {
+  position: absolute;
+  left: 50%;
+  bottom: 15svh;
+  height: 76svh;
+  aspect-ratio: var(--ar);
+  translate: -50% 0;
+  transform-origin: var(--ox) var(--oy);
+  transform: scale(calc(1 + var(--p) * var(--p) * 16));
+}
+.gopuram {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 22px 26px rgb(90 50 10 / 0.35));
+}
+/* warm light inside the open doorway */
+.doorGlow {
+  position: absolute;
+  left: var(--ox);
+  top: var(--oy);
+  width: 22%;
+  height: 22%;
+  translate: -50% -50%;
+  border-radius: 40%;
+  background: radial-gradient(closest-side, #fff7e2, #ffe1a3 55%, #f6c877);
+  box-shadow: 0 0 60px 30px rgb(255 226 160 / 0.6);
+  animation: glowPulse 3.6s ease-in-out infinite alternate;
+}
+@keyframes glowPulse {
+  to {
+    filter: brightness(1.08);
+    box-shadow: 0 0 80px 40px rgb(255 226 160 / 0.75);
+  }
+}
+.gateText {
+  position: absolute;
+  inset: auto 0 calc(env(safe-area-inset-bottom) + 3svh);
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  padding: 0 var(--gutter);
+  text-align: center;
+  opacity: clamp(0, calc(1 - var(--p) * 3.4), 1);
+}
+.gateText .kicker {
+  color: #6e1a2c;
+}
+.gateText {
+  text-shadow: 0 1px 12px rgb(255 248 232 / 0.9);
+}
+.gateLine {
+  max-width: min(32ch, 88vw);
+  text-wrap: balance;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: clamp(1.15rem, 3.2vw, 1.5rem);
+  color: #4c1020;
+}
+.doorLight {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(circle at 50% 60%, #fffaf0, #fbf6ec 70%);
+  opacity: clamp(0, calc((var(--p) - 0.74) * 4.2), 1);
+}
+@media (max-aspect-ratio: 3 / 4) {
+  .gopuramWrap {
+    height: auto;
+    width: 94vw;
+    bottom: 17svh;
+  }
+}
+
+/* ═════════════ INVITATION · carved pillars (ref 4) ═════════════ */
+.invite {
+  padding-top: clamp(90px, 12vw, 150px);
+}
+.invitePillar {
+  position: absolute;
+  bottom: 0;
+  height: min(100%, 1100px);
+  width: auto;
+  aspect-ratio: 368 / 1307;
+  pointer-events: none;
+  transform: translate3d(0, var(--py, 0), 0);
+}
+.invitePillar img {
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 20px 24px rgb(60 30 10 / 0.25));
+}
+/* the reference pillar stands on the right with its leaves leaning in; mirror it for the left */
+.invitePillarL {
+  left: clamp(-60px, -2vw, 0px);
+}
+.invitePillarL img {
+  transform: scaleX(-1);
+}
+.invitePillarR {
+  right: clamp(-60px, -2vw, 0px);
+}
+@media (max-width: 860px) {
+  .invitePillar {
+    height: 78%;
+    opacity: 0.9;
+  }
+  .invitePillarL {
+    left: -12vw;
+  }
+  .invitePillarR {
+    right: -12vw;
+  }
+}
+@media (max-width: 560px) {
+  .invitePillar {
+    height: 64%;
+    opacity: 0.55;
+  }
+  .invitePillarL {
+    left: -18vw;
+  }
+  .invitePillarR {
+    right: -18vw;
+  }
+}
+
+/* ═════════════ COURTYARD behind the bride & groom (ref 7) ═════════════ */
+.courtyard {
+  background:
+    radial-gradient(60% 40% at 50% 35%, #fffaf2, transparent 70%),
+    #fbf3e6;
+}
+.cy {
+  position: absolute;
+  bottom: 0;
+  height: min(92%, 900px);
+  width: auto;
+  aspect-ratio: 577 / 1054;
+  opacity: 0.95;
+}
+.cyL {
+  left: 0;
+}
+.cyR {
+  right: 0;
+  transform: scaleX(-1) translate3d(0, var(--py, 0), 0);
+}
+.cyL {
+  transform: translate3d(0, var(--py, 0), 0);
+}
+@media (max-width: 760px) {
+  .cy {
+    height: 46%;
+    opacity: 0.32;
+  }
+  .cyL {
+    left: -14vw;
+  }
+  .cyR {
+    right: -14vw;
+  }
+}
+
+/* ═════════════ OUR STORY · saptapadi (ref 8) ═════════════ */
+.story {
+  padding-top: 0;
+}
+.feet {
+  position: relative;
+  left: 50%;
+  translate: -50% 0;
+  width: min(100vw, 640px);
+  margin-bottom: clamp(10px, 2vw, 24px);
+}
+.feet img {
+  width: 100%;
+  height: auto;
+}
+.story > .storyLeaf {
+  position: absolute;
+  z-index: 0;
+  bottom: 0;
+  width: clamp(120px, 18vw, 250px);
+  height: auto;
+}
+.storyLeafL {
+  left: 0;
+}
+.storyLeafR {
+  right: 0;
+}
+.stepDot {
+  position: absolute;
+  left: 50%;
+  top: -14px;
+  width: 12px;
+  height: 12px;
+  translate: -50% -100%;
+  rotate: 45deg;
+  background: var(--gold);
+  box-shadow: 0 0 0 5px #f7efe5;
+}
+@media (max-width: 760px) {
+  .stepDot {
+    left: 14px;
+    top: 6px;
+    translate: -50% 0;
+  }
+}
+
+/* ═════════════ CELEBRATIONS · the maroon hall (ref 6) ═════════════ */
+.events {
+  padding-bottom: 0;
+}
+.mBells {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: clamp(110px, 17vw, 240px);
+  height: auto;
+  transform-origin: 30% 0;
+  animation: swing 4.4s ease-in-out infinite alternate;
+}
+.mKolam {
+  position: absolute;
+  left: 0;
+  top: 22%;
+  width: clamp(260px, 38vw, 560px);
+}
+.mKolam img {
+  width: 100%;
+  height: auto;
+  opacity: 0.75;
+}
+html[data-motion="on"] .mKolam img {
+  clip-path: circle(0% at 50% 50%);
+  transition: clip-path 3.6s cubic-bezier(0.45, 0, 0.2, 1) 0.3s;
+}
+html[data-motion="on"] .mKolam[data-in] img {
+  clip-path: circle(72% at 50% 50%);
+}
+.mRight {
+  position: absolute;
+  right: 0;
+  top: 0;
+  height: min(90%, 1080px);
+  width: auto;
+  aspect-ratio: 724 / 1790;
+  object-fit: contain;
+  object-position: right top;
+  transform: translate3d(0, var(--py, 0), 0);
+}
+.mFlowers {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: clamp(130px, 18vw, 260px);
+  height: auto;
+}
+.mFoot {
+  display: flex;
+  justify-content: center;
+  margin-top: clamp(30px, 5vw, 60px);
+}
+.mFoot img {
+  width: min(92vw, 640px);
+  height: auto;
+}
+@media (max-width: 1099px) {
+  .mRight {
+    height: 70%;
+    opacity: 0.45;
+    right: -18vw;
+  }
+  .mKolam {
+    top: 9%;
+    left: -12vw;
+    opacity: 0.6;
+  }
+  .mFlowers {
+    opacity: 0.6;
+  }
+}
+
+/* ═════════════ VENUE · banana trees at the entrance (ref 5) ═════════════ */
+.venue > .venueSide {
+  position: absolute;
+  z-index: 0;
+}
+.venueSide {
+  position: absolute;
+  bottom: 0;
+  height: min(88%, 760px);
+  width: auto;
+  aspect-ratio: 529 / 1035;
+  pointer-events: none;
+  transform: translate3d(0, var(--py, 0), 0);
+}
+.venueSide img {
+  width: 100%;
+  height: 100%;
+}
+.venueSideL {
+  left: clamp(-80px, -3vw, 0px);
+}
+.venueSideR {
+  right: clamp(-80px, -3vw, 0px);
+}
+.venueSideR img {
+  transform: scaleX(-1);
+}
+@media (max-width: 860px) {
+  .venueSide {
+    height: 52%;
+    opacity: 0.55;
+  }
+  .venueSideL {
+    left: -20vw;
+  }
+  .venueSideR {
+    right: -20vw;
+  }
+}
+
+/* ═════════════ COUNTDOWN · the first frame of ref 10 ═════════════ */
+.countdown {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  justify-items: center;
+  gap: clamp(24px, 4vw, 48px);
+}
+.countdownArt {
+  width: min(78vw, 340px);
+  aspect-ratio: 640 / 900;
+  border-radius: 50% 50% 18px 18px / 32% 32% 18px 18px;
+  overflow: hidden;
+  border: 1px solid var(--gold-light);
+  box-shadow: 0 30px 60px -34px rgb(60 30 10 / 0.6);
+}
+.countdownArt img {
+  width: 100%;
+  height: 112%;
+  object-fit: cover;
+  object-position: 50% 40%;
+  transform: translate3d(0, var(--py, 0), 0);
+}
+.countdownBody {
+  display: grid;
+  justify-items: center;
+  min-width: 0;
+}
+@media (min-width: 900px) {
+  .countdown {
+    grid-template-columns: auto minmax(0, 560px);
+    justify-content: center;
+    align-items: center;
+  }
+}
+
+/* ═════════════ CLOSING · the hands (ref 9) ═════════════ */
+.closing {
+  --p: 0;
+  position: relative;
+  overflow: hidden;
+  padding: clamp(130px, 18vw, 230px) var(--gutter) clamp(220px, 34vw, 460px);
+  background-color: #f3eae1;
+  background-size: cover;
+  background-position: 50% 40%;
+  text-align: center;
+}
+.closingArch {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  translate: -50% 0;
+  width: min(100%, 980px);
+  max-width: none;
+  height: auto;
+  mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+}
+.hands {
+  position: relative;
+  left: 50%;
+  translate: -50% 0;
+  width: min(100vw, 760px);
+}
+.handRam,
+.handSita {
+  position: absolute;
+  height: auto;
+  filter: drop-shadow(0 14px 14px rgb(80 40 30 / 0.18));
+}
+.handRam {
+  transform: translateX(calc((1 - var(--p)) * -45%));
+  /* the arm left the reference at its edge: let it fade in from nowhere instead */
+  mask-image: linear-gradient(90deg, transparent, #000 22%);
+}
+.handSita {
+  transform: translateX(calc((1 - var(--p)) * 40%));
+  mask-image: linear-gradient(270deg, transparent, #000 18%);
+}
+.foliage {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  translate: -50% 0;
+  width: max(100%, 560px);
+  max-height: 52%;
+  object-fit: cover;
+  object-position: 50% 0;
+  max-width: none;
+  height: auto;
+  pointer-events: none;
+}
+
+/* ═════════════ reduced motion: every scene at rest, no tall scroll stages ═════════════ */
+@media (prefers-reduced-motion: reduce) {
+  .hero,
+  .gateway {
+    height: auto;
+  }
+  .sticky,
+  .gateSticky {
+    position: relative;
+    height: 100svh;
+  }
+  .gateSticky {
+    height: 90svh;
+  }
+  .world,
+  .gopuramWrap,
+  .gateSky {
+    transform: none !important;
+  }
+  .layer {
+    transition: none;
+  }
+  .doorLight,
+  .heroFade {
+    display: none;
+  }
+  .bell,
+  .leaves,
+  .mBells,
+  .doorGlow,
+  .cue i {
+    animation: none;
+  }
+  .handRam,
+  .handSita {
+    transform: none;
+  }
+}
